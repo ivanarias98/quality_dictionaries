@@ -113,17 +113,11 @@
     <span class="secnum">Bloque 0 · Perfil</span>
     <h2>Datos del experto</h2>
     <p class="help">Estos datos permiten contextualizar las respuestas.</p>
-    <div class="grid2">
-      <div class="field">
-        <label class="fl">Código de participante</label>
-        <input type="text" id="pid" placeholder="P01">
-      </div>
-      <div class="field">
-        <label class="fl">Años de experiencia en lexicografía</label>
-        <select id="exp">
-          <option value="">—</option><option>&lt;5</option><option>5–10</option><option>11–20</option><option>&gt;20</option>
-        </select>
-      </div>
+    <div class="field">
+      <label class="fl">Años de experiencia en lexicografía</label>
+      <select id="exp">
+        <option value="">—</option><option>&lt;5</option><option>5–10</option><option>11–20</option><option>&gt;20</option>
+      </select>
     </div>
     <div class="grid2">
       <div class="field">
@@ -254,15 +248,15 @@
   function csvCell(s){s=(s==null?'':String(s));return '"'+s.replace(/"/g,'""')+'"';}
 
   document.getElementById('download').onclick=()=>{
-    const pid=document.getElementById('pid').value.trim();
-    if(!pid){msg.className='err';msg.textContent='Indique un código de participante antes de descargar.';return;}
+    // identificador anónimo de respuesta (no identifica al participante)
+    const rid='R'+Date.now().toString(36).toUpperCase();
     // posición (1..12) de cada criterio CXX
     const posByCode={};
     order.forEach((ci,pos)=>posByCode[CRITERIA[ci].code]=pos+1);
     const codes=CRITERIA.map(c=>c.code);
-    const header=['participante','perfil','anos_exp','lengua',...codes,'gap_1','gap_2','comentario'];
+    const header=['id_respuesta','perfil','anos_exp','lengua',...codes,'gap_1','gap_2','comentario'];
     const row=[
-      pid,
+      rid,
       document.getElementById('perfil').value,
       document.getElementById('exp').value,
       document.getElementById('lengua').value.trim(),
@@ -275,7 +269,7 @@
     const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
-    a.download='ranking_'+pid.replace(/[^A-Za-z0-9_-]/g,'')+'.csv';
+    a.download='ranking_'+rid+'.csv';
     a.click();URL.revokeObjectURL(a.href);
     msg.className='ok';msg.textContent='Archivo generado. Adjúntelo en su correo al investigador. ¡Gracias!';
   };
